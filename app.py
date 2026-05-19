@@ -8,7 +8,13 @@ from flask_login import LoginManager, login_user, logout_user, login_required, U
 # pymysql es una biblioteca de Python puro para conectarse a bases de datos MySQL y MariaDB.
 # Esta libreria no requiere de extenciones de C, haciendolo sensillo de instalar 
 import pymysql
-
+#Esto es para el corte de caja
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
+from flask import send_file, session 
+import datetime
+#
 from werkzeug.utils import secure_filename  
 import os
  
@@ -19,7 +25,7 @@ def Conexion():
     conn = pymysql.connect( # Establece la conexion a la base de datos, esta funcion se llama cada vez que se realiza una consulta
         host='localhost',   # a la base de datos, permitiendo reutilizar el codigo facilmente.
         user='root',
-        password='10092005',
+        password='10092005', #10092005
         database='frutix',
         autocommit=False   # Desactiva el uso del autocommit para manejar las transacciones manualmente, lo que permite realizar rollbacks en caso de errores.
                            # fomentando la atomicidad de las operaciones y la integridad de los datos en la base de datos.                
@@ -133,6 +139,52 @@ def inventario():
     inventario = cur.fetchall()
     
     return render_template('inventario.html', Inventario=inventario)
+
+@app.route('/ticket_Inventario')
+def ticketInventario():
+
+    conn = Conexion()
+    cur = conn.cursor()
+
+    # Obtener registros de la semana actual
+    cur.execute("SELECT * from inventario WHERE Fecha >= CURRENT_DATE - INTERVAL 7 DAY") # [0]=ID, [1]=Tipo, [2]=Cantidad, [3]=Precio, [4]=Fecha, [5]=Hora, [6]=ID_Producto
+    Inventario = cur.fetchall()
+
+    nombre_pdf = "ticketInventario.pdf"
+
+    doc = SimpleDocTemplate(nombre_pdf, pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    elementos = []
+
+    elementos.append(Paragraph("EL DIVINO NIÑO", styles['Title']))
+    elementos.append(Spacer(1, 10))
+    
+    Tabla = [
+            ["ID", "Tipo", "Cantidad", "Precio", "Fecha", "Hora", "ID_Producto"],
+    ]
+    
+    for Producto in Inventario:
+        Tabla.append([
+            Producto[0], Producto[1], Producto[2], Producto[3], Producto[4], Producto[5], Producto[6]
+        ])
+    elementos.append(Spacer(1, 10))
+
+    elementos.append(Spacer(1, 10))
+    
+    tabla = Table(Tabla)
+    tabla.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), '#d5d5d5'),
+        ('TEXTCOLOR', (0, 0), (-1, 0), '#000000'),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('GRID', (0, 0), (-1, -1), 1, '#000000'),
+    ]))
+
+    doc.build(elementos + [tabla])
+
+    return send_file(nombre_pdf, as_attachment=True)
 
 @app.route('/Modificar_producto', methods=['POST'])
 def modificar_producto():
@@ -259,7 +311,7 @@ def procesar_venta():
         if producto.startswith("productos["): # Verifica que el producto tenga el formato correcto para que se procesen solo los productos seleccionados en el formulario.
             cantidad = int(vendidos) # Convierte la cantidad de cada producto vendido a entero para evitar errores de formato como TypeError.
 
-            if cantidad >= 0:                                           # Verifica que la cantidad sea mayor o igual a 0, para evitar errores de formato como ValueError,
+            if cantidad > 0:                                           # Verifica que la cantidad sea mayor o igual a 0, para evitar errores de formato como ValueError,
                                                                         # ademas de evitar que se ingresen cantidades negativas.
                 id_producto = int(producto.split("[")[1].split("]")[0]) # Obtiene el ID del producto a partir del nombre del campo del formulario, 
                                                                    # el cual tiene el formato "productos[ID]", extrayendo el ID para usarlo en las consultas de la base de datos.
@@ -278,11 +330,7 @@ def procesar_venta():
                 productos_vendidos.append(f"{nombre} x{cantidad}") # Agrega el producto vendido a la lista de productos vendidos.
 
                 detalles.append((id_producto, cantidad, precio)) # Almacena los detalles del producto vendido en la lista de detalles para ingresarlo a la tabla mm_vp.
-                
-            if id_producto is None:
-                flash("La cantidad del producto debe ser mayor a 0", "error") # En caso de que no se seleccione una cantidad para un producto, 
-                conn.rollback()                                               # se muestra un mensaje de error indicando que la cantidad debe ser mayor a 0.
-                return redirect('/ventas')
+            
 
     concepto = ", ".join(productos_vendidos) # Une los productos vendidos en una cadena de texto para mostrarlo y almacenarlo en el concepto de cadena en la base de datos,
                                              # Se vera de esta forma en el apartado de caja.
@@ -319,9 +367,57 @@ def procesar_venta():
             print("ERROR EN mm_vp:", e)
 
     conn.commit()
-
+    flash("Venta realizada exitosamente", "success")#aviso
     return redirect('/ventas')
+#Para generar el ticket de venta--------------
+@app.route('/ticket')
+def ticket():
 
+    conn = Conexion()
+    cur = conn.cursor()
+  
+    # Obtener última venta
+    cur.execute("""
+        SELECT v.Concepto, v.Total, f.Fecha, h.Hora
+        FROM ventas v
+        JOIN Fecha f ON v.Fecha= f.ID_F
+        JOIN Hora h ON v.Hora= h.ID_H
+        ORDER BY v.ID_V DESC
+        LIMIT 1
+    """)
+
+    venta = cur.fetchone()
+
+    nombre_pdf = "ticket.pdf"
+
+    doc = SimpleDocTemplate(nombre_pdf, pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    elementos = []
+
+    elementos.append(Paragraph("EL DIVINO NIÑO", styles['Title']))
+    elementos.append(Spacer(1, 10))
+
+    elementos.append(Paragraph(f"Fecha: {venta[2]}", styles['Normal']))
+    elementos.append(Paragraph(f"Hora: {venta[3]}", styles['Normal']))
+    elementos.append(Spacer(1, 10))
+
+    elementos.append(Paragraph("PRODUCTOS:", styles['Heading2']))
+
+    for producto in venta[0].split(","):
+        elementos.append(Paragraph(producto.strip(), styles['Normal']))
+
+    elementos.append(Spacer(1, 10))
+
+    elementos.append(Paragraph(
+        f"TOTAL: ${venta[1]}",
+        styles['Heading2']
+    ))
+
+    doc.build(elementos)
+
+    return send_file(nombre_pdf, as_attachment=True)
+#---------------------------------------------
 @app.route('/filtrar_productos')
 def filtrar_productos():
     conn = Conexion()
@@ -417,25 +513,121 @@ def caja():
         FROM ventas v
         JOIN Fecha f ON v.Fecha = f.ID_F
         JOIN Hora h ON v.Hora = h.ID_H
-        ORDER BY f.Fecha DESC, h.Hora DESC
-    """) # Obtiene las ventas realizadas, mostrando su concepto, total, fecha y hora, ordenandolas de la mas reciente a la mas antigua para mostrar 
-         # un historial de ventas en el apartado de caja.  (Pendiente: Cambiar para que solo muestre las ventas del turno actual)
+        WHERE f.Fecha = CURDATE()
+        ORDER BY h.Hora ASC
+    """)
     ventas = cur.fetchall()
-    cur.execute("SELECT SUM(Total) FROM ventas") # calcula el total de ventas realizadas para mostrarlo en caja como Ganacias del turno
-    total_ventas = cur.fetchone()[0]
+
     cur.execute("""
-            SELECT g.Concepto, g.Total, f.fecha, h.hora
-            FROM gastos g
-            JOIN Fecha f ON g.Fecha = f.ID_F    
-            JOIN Hora h ON g.Hora = h.ID_H
-            ORDER BY f.Fecha DESC, h.Hora DESC
+        SELECT SUM(v.Total)
+        FROM ventas v
+        JOIN Fecha f ON v.Fecha = f.ID_F
+        WHERE f.Fecha = CURDATE()
+    """)
+    total_ventas = cur.fetchone()[0]
+
+    cur.execute("""
+        SELECT g.Concepto, g.Total, f.fecha, h.hora
+        FROM gastos g
+        JOIN Fecha f ON g.Fecha = f.ID_F    
+        JOIN Hora h ON g.Hora = h.ID_H
+        WHERE f.Fecha = CURDATE()
+        ORDER BY h.Hora ASC
     """)
     gastos = cur.fetchall()
-    cur.execute("SELECT SUM(Total) FROM gastos")
-    total_gastos = cur.fetchone()[0]  # Gastos funciona de forma similar a ventas, mostrando un historial de gastos realizados y 
-                                      # calculando el total de gastos para mostrarlo en caja como Gastos del turno.
-    return render_template('caja.html', ventas=ventas, gastos=gastos, total_ventas=total_ventas, total_gastos=total_gastos)
 
+    cur.execute("""
+        SELECT SUM(g.Total)
+        FROM gastos g
+        JOIN Fecha f ON g.Fecha = f.ID_F
+        WHERE f.Fecha = CURDATE()
+    """)
+    total_gastos = cur.fetchone()[0]
+
+    return render_template('caja.html', ventas=ventas, gastos=gastos, total_ventas=total_ventas, total_gastos=total_gastos)
+#CORTE DE CAJA--------------------------------------------
+@app.route('/realizar_corte', methods=['POST'])
+def realizar_corte():
+
+    conn = Conexion()
+    cur = conn.cursor()
+
+    # Para obtener las ventas
+    cur.execute("""
+        SELECT v.Concepto, v.Total, f.Fecha, h.Hora
+        FROM ventas v
+        JOIN Fecha f ON v.Fecha = f.ID_F
+        JOIN Hora h ON v.Hora = h.ID_H
+        WHERE f.Fecha = CURDATE()
+    """)
+
+    ventas = cur.fetchall()
+
+    # Para obtener los gastos
+    cur.execute("""
+        SELECT g.Concepto, g.Total, f.Fecha, h.Hora
+        FROM gastos g
+        JOIN Fecha f ON g.Fecha = f.ID_F
+        JOIN Hora h ON g.Hora = h.ID_H
+        WHERE f.Fecha = CURDATE()
+    """)
+#Trae todos los resultados de la consulta SQL y se guarda en la variable "gastos"
+    gastos = cur.fetchall()
+
+    # Se obtiene el total de ingresos y egresos
+    total_ventas = sum(float(v[1]) for v in ventas)
+    total_gastos = sum(float(g[1]) for g in gastos)
+
+    total_final = total_ventas - total_gastos
+
+    # Es el nombre con el que se guarda el PDF
+    nombre_pdf = f"Corte_Frutix_{datetime.date.today()}.pdf"
+#Crea un pdf automaticamente gracias a la libreria ReportLab
+    doc = SimpleDocTemplate(nombre_pdf, pagesize=letter)
+#Esto es porque la libreria crea estilos predeterminados
+    styles = getSampleStyleSheet()
+
+    elementos = []#Se crea una lista para los elementos
+    #Aqui se empieza a construir la estructura siendo el titulo lo primero
+    elementos.append(Paragraph("CORTE DE CAJA", styles['Title']))
+    elementos.append(Spacer(1, 20))#es un espacio
+#Formato para la fecha
+    elementos.append(Paragraph(f"Fecha: {datetime.date.today()}", styles['Normal']))
+    elementos.append(Spacer(1, 10))
+
+    elementos.append(Paragraph("VENTAS", styles['Heading2']))
+    #Se encarga de recorrer todas las ventas obtenidas
+    for venta in ventas:
+        texto = f"{venta[3]} - {venta[0]} - ${venta[1]}"
+        elementos.append(Paragraph(texto, styles['Normal']))#Crea el texto de cada venta
+
+    elementos.append(Spacer(1, 15))
+    #Se utiliza el mismo proceso para gastos
+    elementos.append(Paragraph("GASTOS", styles['Heading2']))
+
+    for gasto in gastos:
+        texto = f"{gasto[3]} - {gasto[0]} - ${gasto[1]}"
+        elementos.append(Paragraph(texto, styles['Normal']))
+
+    elementos.append(Spacer(1, 20))
+
+    elementos.append(Paragraph(f"Total ventas: ${total_ventas}", styles['Normal']))
+    elementos.append(Paragraph(f"Total gastos: ${total_gastos}", styles['Normal']))
+    elementos.append(Paragraph(f"Total final: ${total_final}", styles['Heading2']))
+
+    doc.build(elementos)
+
+    # Al terminar se limpian los movimientos del html para empezar de nuevo
+    cur.execute("DELETE FROM mm_vp")
+    cur.execute("DELETE FROM ventas")
+    cur.execute("DELETE FROM gastos")
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return send_file(nombre_pdf, as_attachment=True)
 #----------------------GASTOS-----------------------------
 @app.route('/gastos')
 def gastos():
@@ -472,4 +664,7 @@ def agregar_gasto():
         """, (concepto, monto, id_fecha, id_hora)) # Almacena el gasto en la tabla gastos, ingresando su concepto, monto, fecha y hora obtenidos del formulario.
         
         conn.commit()
+    flash("Gasto agregado exitosamente", "sucess") #aviso   
     return redirect('/gastos')
+if __name__ == "__main__":
+    app.run(debug=True)
