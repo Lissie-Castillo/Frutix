@@ -25,7 +25,7 @@ def Conexion():
     conn = pymysql.connect( # Establece la conexion a la base de datos, esta funcion se llama cada vez que se realiza una consulta
         host='localhost',   # a la base de datos, permitiendo reutilizar el codigo facilmente.
         user='root',
-        password='10092005', #10092005
+        password='', #10092005
         database='frutix',
         autocommit=False   # Desactiva el uso del autocommit para manejar las transacciones manualmente, lo que permite realizar rollbacks en caso de errores.
                            # fomentando la atomicidad de las operaciones y la integridad de los datos en la base de datos.                
@@ -666,5 +666,44 @@ def agregar_gasto():
         conn.commit()
     flash("Gasto agregado exitosamente", "sucess") #aviso   
     return redirect('/gastos')
+#Para los productos que están inactivos--------------
+@app.route('/inventario/inactivos')
+@login_required
+def inventario_inactivos():
+    conn = Conexion()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT p.nombre, p.cantidad, p.precio, p.merma, p.categoria, e.nombre_embolsado, p.codigo
+        FROM frutix.embolsado e
+        JOIN frutix.mm_prodtip pr ON pr.ID_embolsado = e.id_em
+        JOIN frutix.productos p ON pr.ID_producto = p.codigo
+        WHERE p.estado = 'Inactivo'
+    """)
+    inactivos = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify([{
+        'codigo': r[6],
+        'nombre': r[0],
+        'cantidad': r[1],
+        'precio': str(r[2]),
+        'categoria': r[4]
+    } for r in inactivos])
+ #Para traerlo de vuelta
+@app.route('/Reactivar_producto', methods=['POST'])
+@login_required
+def reactivar_producto():
+    id_producto = request.form['ID']
+    conn = Conexion()
+    with conn.cursor() as cur:
+        cur.execute("UPDATE productos SET Estado = 'Activo' WHERE codigo = %s", (id_producto,))
+    conn.commit()
+    conn.close()
+    return redirect('/inventario')
+#---------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host= '0.0.0.0', 
+        port= 5000,
+        debug= True
+    )
