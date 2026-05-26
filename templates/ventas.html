@@ -21,27 +21,38 @@
             color: white;
             display: flex;
             justify-content: space-between;
-            padding: 10px 20px;
+            align-items: center;
+            padding: 10px 24px;
+            font-size: 14px;
         }
 
         .rol {
             background: #a6d96a;
-            padding: 5px 15px;
+            color: #1a3a00;
+            padding: 4px 14px;
             border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
         }
 
         /* TITULO */
         .titulo {
-            color: #5ca36b;
-            font-size: 40px;
+            color: #2e7d4f;
+            font-size: 34px;
             font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        hr {
+            border-color: #c5c2a8;
+            border-width: 1.5px;
         }
 
         /* CONTENEDOR PRINCIPAL */
         .contenedor-principal {
             display: flex;
-            gap: 20px;
-            padding: 20px;
+            gap: 16px;
+            padding: 16px 20px;
         }
 
         /* IZQUIERDA */
@@ -57,63 +68,233 @@
         /* CONTENEDOR INTERNO */
         .contenedor {
             display: flex;
-            gap: 20px;
+            gap: 12px;
         }
 
         /* CATEGORIAS */
         .categorias {
-            width: 200px;
-            background: #dcd8bf;
-            padding: 10px;
-            border-radius: 10px;
+            width: 160px;
+            background: #f4f1da;
+            border: 0.5px solid #c5c2a8;
+            padding: 14px 10px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            margin-left: -60px;
+        }
+
+        .categorias strong {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #5a6b4a;
+            margin-bottom: 10px;
+            padding: 0 4px;
         }
 
         .categorias button {
             width: 100%;
-            margin: 8px 0;
-            background: #5ca36b;
+            margin: 2px 0;
+            background: none;
             border: none;
-            padding: 10px;
-            border-radius: 20px;
+            padding: 9px 12px;
+            border-radius: 8px;
             cursor: pointer;
+            text-align: left;
+            font-size: 13px;
+            color: #3a4a2a;
+            transition: background 0.15s;
+        }
+
+        .categorias button:hover {
+            background: #d4f0c4;
+        }
+
+        .categorias button.active {
+            background: #5ca36b;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* BARRA DE BUSQUEDA */
+        .barra-busqueda {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f4f1da;
+            border: 0.5px solid #c5c2a8;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .barra-busqueda input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 13px;
+            color: #2a3a1a;
+            width: 100%;
+        }
+
+        .barra-busqueda input::placeholder {
+            color: #aaa;
+        }
+
+        .barra-busqueda span {
+            font-size: 16px;
+            color: #5ca36b;
         }
 
         /* PRODUCTOS */
         .productos {
             flex: 1;
-            background: #dcd8bf;
-            padding: 15px;
-            border-radius: 10px;
+            background: #f4f1da;
+            border: 0.5px solid #c5c2a8;
+            padding: 14px;
+            border-radius: 12px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            max-height: 450px;
+            /*Se le agrega responsive*/
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            max-height: 75vh;
             overflow-y: auto;
+            align-content: start;
         }
 
         .producto {
-            background: #cfe3d4;
-            height: fit-content;
-            min-height: 60%;
-            max-height: 110%;
+            background: white;
+            border: 0.5px solid #c8d8bc;
             border-radius: 10px;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
+            transition: transform 0.15s, border-color 0.15s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 240px;
+        }
+
+        .producto:hover {
+            transform: translateY(-2px);
+            border-color: #5ca36b;
         }
 
         .producto img {
             width: 100%;
             height: 100px;
             object-fit: contain;
+            margin-bottom: 6px;
+        }
+
+        .producto strong {
+            font-size: 12px;
+            color: #2a3a1a;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .producto .precio {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2e7d4f;
+            margin: 4px 0 2px;
+        }
+
+        .producto .disp {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .producto input[type=number] {
+            width: 100%;
+            border: 1px solid #c8d8bc;
+            border-radius: 6px;
+            padding: 4px 6px;
+            font-size: 13px;
+            text-align: center;
+            background: #f4f1da;
+            color: #2a3a1a;
+        }
+
+        .producto input[type=number]:focus {
+            outline: none;
+            border-color: #5ca36b;
         }
 
         /* TICKET */
         .ticket {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
+            border: 0.5px solid #c5c2a8;
+            padding: 16px;
+            border-radius: 12px;
             position: sticky;
             top: 20px;
+        }
+
+        .ticket h5 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2a3a1a;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        #resumen-productos .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #555;
+            padding: 3px 0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2a3a1a;
+            margin: 12px 0 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .cambio-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #2e7d4f;
+            font-weight: 600;
+            margin: 6px 0 14px;
+        }
+
+        #efectivo {
+            width: 100%;
+            border: 1.5px solid #c8d8bc;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 14px;
+            color: #2a3a1a;
+            background: #f9f8f2;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #efectivo:focus {
+            outline: none;
+            border-color: #5ca36b;
+        }
+
+        /* BOTON CONFIRMAR */
+        #btnConfirmar {
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px;
         }
 
         /* MENSAJE */
@@ -130,16 +311,27 @@
             bottom: 20px;
             left: 20px;
             cursor: pointer;
+            background: #0b3d0b;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: transform 0.2s;
-        }
-
-        .btn-regresar img {
-            width: 65px;
         }
 
         .btn-regresar:hover {
             transform: scale(1.1);
         }
+
+        .btn-regresar img {
+            width: 32px;
+            filter: brightness(0) invert(1);
+        }
+        
+
     </style>
 </head>
 
@@ -165,6 +357,7 @@
         </ul>
         {% endif %}
         {% endwith %}
+
         <div class="titulo">Venta del día</div>
         <hr>
 
@@ -177,22 +370,29 @@
 
                 <!-- IZQUIERDA -->
                 <div class="lado-productos">
-
                     <div class="contenedor">
 
                         <!-- CATEGORIAS -->
                         <div class="categorias">
                             <strong>Categoría</strong>
-                            <button type="button" onclick="filtrar('todas')">Todas</button>
-                            <button type="button" onclick="filtrar('1')">Frutas</button>
-                            <button type="button" onclick="filtrar('2')">Verduras</button>
-                            <button type="button" onclick="filtrar('6')">Carne</button>
-                            <button type="button" onclick="filtrar('3')">Abarrotes</button>
-                            <button type="button" onclick="filtrar('4')">Condimentos</button>
-                            <button type="button" onclick="filtrar('5')">Dulces</button>
+                            <button type="button" class="active" onclick="filtrar('todas'); setActive(this)">🛒 Todas</button>
+                            <button type="button" onclick="filtrar('1'); setActive(this)">🍎 Frutas</button>
+                            <button type="button" onclick="filtrar('2'); setActive(this)">🥦 Verduras</button>
+                            <button type="button" onclick="filtrar('6'); setActive(this)">🥩 Carne</button>
+                            <button type="button" onclick="filtrar('3'); setActive(this)">🛍 Abarrotes</button>
+                            <button type="button" onclick="filtrar('4'); setActive(this)">🧂 Condimentos</button>
+                            <button type="button" onclick="filtrar('5'); setActive(this)">🍬 Dulces</button>
                         </div>
 
                         <!-- PRODUCTOS -->
+                        <div style="flex:1; display:flex; flex-direction:column;">
+
+                        <div class="barra-busqueda">
+                            <span>🔍</span>
+                            <input type="text" id="buscador" placeholder="Buscar producto por nombre..." oninput="buscarProducto()">
+                            <button type="button" onclick="limpiarBusqueda()" id="btn-limpiar" style="background:none;border:none;cursor:pointer;color:#aaa;font-size:16px;display:none;" title="Limpiar">✕</button>
+                        </div>
+
                         <div class="productos">
                             {% for producto in productos %}
                             <div class="producto" data-categoria="{{ producto[5] }}">
@@ -200,47 +400,61 @@
                                 <input type="hidden" name="ID" value="{{ producto[0] }}">
                                 <input type="hidden" name="producto_venta" value="{{ producto[1] }}">
                                 <strong>{{ producto[1] }}</strong>
-                                <p>$ {{ producto[3] }}</p>
-                                <p style="height: 5px; margin-top: 0px;">Disponibles: {{ producto[2]}}</p>
+                                <p class="precio">$ {{ producto[3] }}</p>
+                                <p class="disp">Disponibles: {{ producto[2] }}</p>
                                 <input type="hidden" name="Cantidad" value="{{ producto[3] }}">
                                 <input type="number" name="productos[{{ producto[0] }}]" data-id="{{ producto[0] }}"
                                     min="0" max="{{ producto[2] }}" value="0">
-                                <input type="hidden" name="Empleado" value="{{session.get('username','desconocido')}}">
+                                <input type="hidden" name="Empleado" value="{{ session.get('username', 'desconocido') }}">
                             </div>
                             {% endfor %}
                         </div>
+                        </div><!-- cierre flex column -->
 
                     </div>
-
                 </div>
 
                 <!-- DERECHA (TICKET) -->
                 <div class="lado-ticket">
-
                     <div class="ticket">
 
                         <h5>Resumen</h5>
 
-                        <div id="resumen-productos"></div>
+                        <div id="resumen-productos">
+                            <p style="font-size:12px; color:#aaa; text-align:center; padding:8px 0;">Sin productos aún</p>
+                        </div>
 
-                        <p><strong>Total:</strong> $<span id="total">0</span></p>
+                        <div class="total-row">
+                            <span>Total</span>
+                            <span>$<span id="total">0.00</span></span>
+                        </div>
+
+                        <input type="number"
+                            onkeydown="if(event.key==='e'||event.key==='E') event.preventDefault();"
+                            id="efectivo"
+                            placeholder="Efectivo recibido"
+                            min="1" max="9999" maxlength="4"
+                            required>
+
+                        <div class="cambio-row">
+                            <span>Cambio</span>
+                            <span>$<span id="cambio">0.00</span></span>
+                        </div>
+
                         <input type="hidden" name="total_venta" id="total_venta">
-
-                        <input type="number" onkeydown="if(event.key==='e'||event.key==='E') event.preventDefault();" id="efectivo" placeholder="Efectivo" min="1" max="9999" maxlength="4" required>
-
-                        <p><strong>Cambio:</strong> $<span id="cambio">0</span></p>
-
-                        <button id="btnConfirmar" type="submit" class="btn btn-success w-100" disabled>Confirmar
-                            venta</button>
+                        <button id="btnConfirmar" type="submit" class="btn btn-success w-100" disabled>
+                            Confirmar venta
+                        </button>
+                        <a href="/ticket" class="btn btn-outline-success w-100 mt-2">
+                            Ticket 
+                        </a>
 
                     </div>
-
                 </div>
 
             </div>
 
         </form>
-
     </div>
 
     <!-- BOTON REGRESAR -->
@@ -253,7 +467,6 @@
         // ===== FECHA Y HORA =====
         function actualizarHora() {
             const ahora = new Date();
-
             const opciones = {
                 day: '2-digit',
                 month: 'long',
@@ -262,12 +475,18 @@
                 minute: '2-digit',
                 second: '2-digit'
             };
-
             document.getElementById("fecha-hora").textContent =
                 ahora.toLocaleDateString('es-MX', opciones);
         }
         setInterval(actualizarHora, 1000);
         actualizarHora();
+
+
+        // ===== CATEGORIA ACTIVA =====
+        function setActive(btn) {
+            document.querySelectorAll('.categorias button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
 
 
         // ===== FILTRO =====
@@ -279,98 +498,131 @@
                 calcularTotal();
             }
         });
-        function filtrar(categoria) {
 
+        function filtrar(categoria) {
             fetch(`/filtrar_productos?categoria=${categoria}`)
                 .then(res => res.json())
                 .then(data => {
-
                     let contenedor = document.querySelector(".productos");
                     contenedor.innerHTML = "";
-
                     data.forEach(producto => {
-
                         let cantidadGuardada = cantidades[producto.codigo] || 0;
-
                         contenedor.innerHTML += `
-        <div class="producto">
-            <img src="/static/${producto.nombre}.png">
-            <strong>${producto.nombre}</strong>
-            <p>$ ${producto.precio}</p>
-
-            <input type="number"
-                name="productos[${producto.codigo}]"
-                value="${cantidadGuardada}"
-                min="0"
-                max="${producto.cantidad}">
-        </div>
-    `;
+                        <div class="producto">
+                            <img src="/static/${producto.nombre}.png">
+                            <strong>${producto.nombre}</strong>
+                            <p class="precio">$ ${producto.precio}</p>
+                            <p class="disp">Disponibles: ${producto.cantidad}</p>
+                            <input type="number"
+                                name="productos[${producto.codigo}]"
+                                value="${cantidadGuardada}"
+                                min="0"
+                                max="${producto.cantidad}">
+                        </div>`;
                     });
                     calcularTotal();
                 });
-
         }
 
 
-        // ===== TOTAL =====
-        const listaProductos = JSON.parse('{{ productos | tojson }}'); // Los productos se pasan a un script JavaScript como un arreglo de objetos
-        const totalLabel = document.getElementById("total"); // Obteniendo el elemento donde se muestra el total
+        // ===== TOTAL Y RESUMEN =====
+        const listaProductos = JSON.parse('{{ productos | tojson }}');
 
-        function calcularTotal() { // La funcion calcularTotal recorre el arreglo de las cantidades seleccionadas de productos.
+        function calcularTotal() {
             let total = 0;
+            let items = [];
 
-            Object.keys(cantidades).forEach(id => { // Por cada producto seleccionado obtiene la cantidad como objeto
-                let cantidad = parseFloat(cantidades[id]) || 0; // Si la cantidad no es un número válido, se considera como 0, si no convierte el numero a decimal.
-
-                let producto = listaProductos.find(p => p[0] == id); // Busca el producto correspondiente en la lista de productos utilizando su ID.
-
-                if (producto && cantidad > 0) { // Si el producto existe y la cantidad es mayor a 0,
-                    total += producto[3] * cantidad; // se calcula el total multiplicando el precio del producto por la cantidad seleccionada y se suma al total general.
+            Object.keys(cantidades).forEach(id => {
+                let cantidad = parseFloat(cantidades[id]) || 0;
+                let producto = listaProductos.find(p => p[0] == id);
+                if (producto && cantidad > 0) {
+                    let subtotal = producto[3] * cantidad;
+                    total += subtotal;
+                    items.push({ nombre: producto[1], cantidad, subtotal });
                 }
             });
 
-            document.getElementById("total").textContent = total.toFixed(2); // Finalmente, el total se muestra en el elemento correspondiente con dos decimales.
-            validarPago(); // Se llama a la función validarPago para actualizar el estado del botón de confirmación y el cambio cada vez que se recalcula el total.
+            document.getElementById("total").textContent = total.toFixed(2);
+            document.getElementById("total_venta").value = total.toFixed(2);
+
+            const resumen = document.getElementById("resumen-productos");
+            if (items.length === 0) {
+                resumen.innerHTML = '<p style="font-size:12px;color:#aaa;text-align:center;padding:8px 0;">Sin productos aún</p>';
+            } else {
+                resumen.innerHTML = items.map(it =>
+                    `<div class="resumen-item">
+                        <span>${it.nombre} x${it.cantidad}</span>
+                        <span>$${it.subtotal.toFixed(2)}</span>
+                    </div>`
+                ).join('');
+            }
+
+            validarPago();
         }
 
+
         // ===== CAMBIO =====
-        const totalL = document.getElementById("total");
-        const cambioLabel = document.getElementById("cambio");
-        const boton = document.getElementById("btnConfirmar");
+        const efectivoInput = document.getElementById("efectivo");
 
         function validarPago() {
-            let total = parseFloat(totalL.textContent) || 0;
+            let total = parseFloat(document.getElementById("total").textContent) || 0;
             let efectivo = parseFloat(efectivoInput.value) || 0;
-
             let cambio = efectivo - total;
 
             if (efectivo >= total && total > 0) {
-                cambioLabel.textContent = cambio.toFixed(2);
-                boton.disabled = false;
+                document.getElementById("cambio").textContent = cambio.toFixed(2);
+                document.getElementById("btnConfirmar").disabled = false;
             } else {
-                cambioLabel.textContent = "0";
-                boton.disabled = true;
+                document.getElementById("cambio").textContent = "0.00";
+                document.getElementById("btnConfirmar").disabled = true;
             }
         }
-        const efectivoInput = document.getElementById("efectivo");
+
         efectivoInput.addEventListener("input", validarPago);
-        let e = parseFloat(document.getElementById("efectivo").value);
-        let t = parseFloat(totalLabel.textContent);
 
-        document.getElementById("cambio").textContent =
-            (!isNaN(e) && e >= t) ? (e - t).toFixed(2) : "0";
 
-        // regresar dependiendo del rol
+        // ===== BUSQUEDA =====
+        function buscarProducto() {
+            const texto = document.getElementById("buscador").value.toLowerCase().trim();
+            const btnLimpiar = document.getElementById("btn-limpiar");
+            btnLimpiar.style.display = texto.length > 0 ? "block" : "none";
+
+            const tarjetas = document.querySelectorAll(".productos .producto");
+            let encontrados = 0;
+
+            tarjetas.forEach(tarjeta => {
+                const nombre = tarjeta.querySelector("strong").textContent.toLowerCase();
+                const coincide = nombre.includes(texto);
+                tarjeta.style.display = coincide ? "" : "none";
+                if (coincide) encontrados++;
+            });
+
+            // Mostrar mensaje si no hay resultados
+            let sinResultados = document.getElementById("sin-resultados");
+            if (!sinResultados) {
+                sinResultados = document.createElement("p");
+                sinResultados.id = "sin-resultados";
+                sinResultados.style.cssText = "font-size:13px;color:#aaa;text-align:center;padding:20px 0;grid-column:1/-1;";
+                sinResultados.textContent = "No se encontraron productos";
+                document.querySelector(".productos").appendChild(sinResultados);
+            }
+            sinResultados.style.display = (encontrados === 0 && texto.length > 0) ? "block" : "none";
+        }
+
+        function limpiarBusqueda() {
+            document.getElementById("buscador").value = "";
+            buscarProducto();
+        }
+
+
+        // ===== REGRESAR =====
         function regresar() {
             let tipo = "{{ session.get('rol') }}";
-            console.log(tipo);
             if (tipo === "1") {
                 window.location.href = "/login_adm";
-            }
-            else if (tipo === "2") {
+            } else if (tipo === "2") {
                 window.location.href = "/login_gerente";
-            }
-            else {
+            } else {
                 window.location.href = "/login_empleado";
             }
         }
@@ -378,5 +630,4 @@
     </script>
 
 </body>
-
 </html>
